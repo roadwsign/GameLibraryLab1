@@ -1,8 +1,34 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Головна";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container py-5">
+    <div class="row align-items-center mb-5 mt-4">
+        <div class="col-md-9">
+            <h1 class="display-4 fw-bold text-white mb-2">Що таке "Ігрова бібліотека"?</h1>
+            <p class="fs-5 text-white-50">Ваша персональна база ігор, все в одному місці. Переглядайте відгуки інших користувачів, додавайте ігри в свою бібліотеку з особливим статусом.</p>
+        </div>
+        <div class="col-md-3 text-md-end">
+            <a asp-controller="Games" asp-action="Index" class="btn btn-outline-info fw-bold px-4">Переглянути бібліотеку ігор</a>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-12 border-bottom border-secondary border-opacity-25 pb-2 mb-4">
+            <h6 class="text-uppercase text-info fw-bold ls-1 mb-0 shadow-sm" style="text-shadow: 0 0 10px rgba(50, 251, 226, 0.5);">Нещодавно додано</h6>
+        </div>
+
+        @for (int i = 0; i < 6; i++)
+        {
+            <div class="col-6 col-sm-4 col-md-2">
+                <div class="card bg-transparent border-0 hover-up">
+                    <div class="ratio ratio-3x4 rounded-3 mb-2 shadow-sm" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
+                        <div class="d-flex align-items-center justify-content-center text-white-50 small">No Poster</div>
+                    </div>
+                    <div class="small text-white text-truncate fw-bold">Game Title</div>
+                    <div class="x-small text-white-50">2024</div>
+                </div>
+            </div>
+        }
+    </div>
 </div>

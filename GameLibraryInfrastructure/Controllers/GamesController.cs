@@ -33,9 +33,10 @@ namespace GameLibraryInfrastructure.Controllers
                 .Include(g => g.Genre)
                 .AsQueryable();
 
-            if (!string.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrWhiteSpace(searchString))
             {
-                gamesQuery = gamesQuery.Where(s => s.Title.Contains(searchString));
+                var lowerSearch = searchString.ToLower().Trim();
+                gamesQuery = gamesQuery.Where(s => s.Title.ToLower().Contains(lowerSearch));
                 ViewBag.CurrentFilter = searchString;
             }
 
@@ -128,6 +129,9 @@ namespace GameLibraryInfrastructure.Controllers
             {
                 return NotFound();
             }
+            ModelState.Remove("Genre");
+            ModelState.Remove("Developer");
+            ModelState.Remove("Updatedat");
 
             if (ModelState.IsValid)
             {

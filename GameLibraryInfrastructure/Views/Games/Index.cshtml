@@ -6,84 +6,86 @@
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-<h1>@ViewBag.FilterName</h1>
+<h1 class="mb-4 text-white fw-bold">@ViewBag.FilterName</h1>
 
 <form asp-action="Index" method="get" class="mb-4">
-    <div class="row align-items-end g-2">
-
+    <div class="row align-items-end g-3">
         <div class="col-md-3">
-            <label class="form-label">Назва гри:</label>
-            <input type="text" name="searchString" id="searchInput" value="@ViewBag.CurrentFilter" class="form-control" placeholder="Почніть вводити назву..." />
+            <label class="form-label text-info small fw-bold">Назва гри:</label>
+            <input type="text" name="searchString" id="searchInput" value="@ViewBag.CurrentFilter" class="form-control" placeholder="Введіть назву гри" />
         </div>
 
         <div class="col-md-2">
-            <label class="form-label">Жанр:</label>
+            <label class="form-label text-info small fw-bold">Жанр:</label>
             <select name="genreId" class="form-control select-search" asp-items="ViewBag.Genreid">
                 <option value="">Усі жанри</option>
             </select>
         </div>
 
         <div class="col-md-2">
-            <label class="form-label">Розробник:</label>
+            <label class="form-label text-info small fw-bold">Розробник:</label>
             <select name="developerId" class="form-control select-search" asp-items="ViewBag.Developerid">
                 <option value="">Усі розробники</option>
             </select>
         </div>
 
         <div class="col-md-2">
-            <label class="form-label">Рік:</label>
+            <label class="form-label text-info small fw-bold">Рік:</label>
             <select name="year" class="form-control select-search" asp-items="ViewBag.Years">
                 <option value="">Усі роки</option>
             </select>
         </div>
 
-        <div class="col-md-3">
-            <button type="submit" class="btn btn-info text-white">Знайти</button>
-            <a asp-action="Index" class="btn btn-outline-secondary ms-1">Скинути</a>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-info px-4">Знайти</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Скинути</a>
         </div>
     </div>
 </form>
 
-<p>
+<p class="mb-4">
     <a asp-action="Create"
        asp-route-developerId="@ViewBag.DeveloperId"
        asp-route-genreId="@ViewBag.GenreId"
-       class="btn btn-primary">Додати нову гру</a>
+       class="btn btn-primary fw-bold" style="background-color: #6f42c1; border: none;">Додати нову гру</a>
 </p>
 
-<table class="table table-striped" id="gamesTable">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.Title)</th>
-            <th>@Html.DisplayNameFor(model => model.Description)</th>
-            <th>@Html.DisplayNameFor(model => model.Releaseyear)</th>
-            <th>@Html.DisplayNameFor(model => model.Createdat)</th>
-            <th>@Html.DisplayNameFor(model => model.Updatedat)</th>
-            <th>@Html.DisplayNameFor(model => model.Developer)</th>
-            <th>@Html.DisplayNameFor(model => model.Genre)</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@Html.DisplayFor(modelItem => item.Title)</td>
-                <td>@Html.DisplayFor(modelItem => item.Description)</td>
-                <td>@Html.DisplayFor(modelItem => item.Releaseyear)</td>
-                <td>@Html.DisplayFor(modelItem => item.Createdat)</td>
-                <td>@Html.DisplayFor(modelItem => item.Updatedat)</td>
-                <td>@Html.DisplayFor(modelItem => item.Developer.Name)</td>
-                <td>@Html.DisplayFor(modelItem => item.Genre.Name)</td>
-                <td style="white-space: nowrap;">
-                    <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="mt-4" id="gamesList">
+    @foreach (var item in Model)
+    {
+        <div class="game-list-item d-flex align-items-center border-bottom border-secondary border-opacity-25 py-3 hover-up">
+
+            <div class="flex-shrink-0 me-4" style="width: 72px;">
+                <div class="ratio ratio-3x4 rounded shadow-sm overflow-hidden" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                    <div class="d-flex align-items-center justify-content-center text-white-50 x-small text-center p-1">No Poster</div>
+                </div>
+            </div>
+
+            <div class="flex-grow-1">
+                <h4 class="mb-1 text-white fw-bold game-title">
+                    @item.Title <span class="fs-6 text-white-50 fw-normal ms-2">@item.Releaseyear</span>
+                </h4>
+                <div class="text-white-50 small mb-2 text-truncate" style="max-width: 600px;">
+                    @item.Description
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="badge" style="background-color: #ea39b8; color: white; letter-spacing: 0.5px;">@item.Genre.Name</span>
+                    <span class="badge" style="background-color: #1a0933; border: 1px solid #441a80; color: #32fbe2; letter-spacing: 0.5px;">@item.Developer.Name</span>
+                </div>
+            </div>
+
+            <div class="flex-shrink-0 ms-3 d-flex flex-column gap-2 text-end align-items-end">
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info fw-bold px-4" style="width: 120px;">Деталі</a>
+                <div class="d-flex justify-content-end gap-2 mt-1">
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="text-white-50 text-decoration-none small hover-text-info">Редагувати</a>
+                    <span class="text-white-50 small">|</span>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="text-white-50 text-decoration-none small hover-text-danger">Видалити</a>
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -97,14 +99,16 @@
             });
             document.getElementById('searchInput').addEventListener('keyup', function () {
                 let filter = this.value.toLowerCase();
-                let rows = document.querySelectorAll('#gamesTable tbody tr');
+                let rows = document.querySelectorAll('.game-list-item');
 
                 rows.forEach(row => {
-                    let title = row.querySelector('td:first-child').textContent.toLowerCase();
+                    let title = row.querySelector('.game-title').textContent.toLowerCase();
                     if (title.includes(filter)) {
-                        row.style.display = "";
+                        row.classList.remove('d-none');
+                        row.classList.add('d-flex');
                     } else {
-                        row.style.display = "none";
+                        row.classList.remove('d-flex');
+                        row.classList.add('d-none');
                     }
                 });
             });

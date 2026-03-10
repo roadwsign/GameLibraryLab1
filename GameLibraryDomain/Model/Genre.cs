@@ -6,7 +6,7 @@ namespace GameLibraryDomain.Model;
 
 public partial class Genre: Entity
 {
-    [Display(Name = "Назва жанру")]
+    [Display(Name = "Жанр")]
     [Required(ErrorMessage = "Поле не повинно бути порожнім")]
     public string Name { get; set; } = null!;
 

@@ -18,7 +18,11 @@ public partial class Game: Entity
     [Display(Name = "Рік випуску")]
     public int? Releaseyear { get; set; }
 
+    [Display(Name = "Жанр")]
+
     public int Genreid { get; set; }
+
+    [Display(Name = "Розробник")]
 
     public int Developerid { get; set; }
 

@@ -4,32 +4,31 @@
     ViewData["Title"] = "Статуси гри";
 }
 
-<h1>Статуси гри</h1>
+<h1 class="mb-4 text-white fw-bold">Статуси гри</h1>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Додати новий статус</a>
+<p class="mb-4">
+    <a asp-action="Create" class="btn btn-primary fw-bold" style="background-color: #6f42c1; border: none;">Додати новий статус</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Statusname)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Statusname)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+<div class="mt-4">
+    <div class="border-bottom border-secondary border-opacity-50 pb-2 mb-3">
+        <span class="text-info fw-bold small text-uppercase">Назва статусу</span>
+    </div>
+
+    @foreach (var item in Model)
+    {
+        <div class="d-flex align-items-center justify-content-between border-bottom border-secondary border-opacity-25 py-3 hover-up">
+
+            <div class="flex-grow-1">
+                <h5 class="mb-0 text-white fw-bold">@item.Statusname</h5>
+            </div>
+
+            <div class="flex-shrink-0 d-flex gap-3">
+                <a asp-action="Edit" asp-route-id="@item.Id" class="text-white-50 text-decoration-none small hover-text-info">Редагувати</a>
+                <a asp-action="Details" asp-route-id="@item.Id" class="text-white-50 text-decoration-none small hover-text-info">Деталі</a>
+                <a asp-action="Delete" asp-route-id="@item.Id" class="text-white-50 text-decoration-none small hover-text-danger">Видалити</a>
+            </div>
+
+        </div>
+    }
+</div>

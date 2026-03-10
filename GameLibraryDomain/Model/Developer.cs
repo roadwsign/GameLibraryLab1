@@ -6,7 +6,7 @@ namespace GameLibraryDomain.Model;
 
 public partial class Developer: Entity
 {
-    [Display(Name = "Назва розробника")]
+    [Display(Name = "Розробник")]
     [Required(ErrorMessage = "Поле не повинно бути порожнім")]
     public string Name { get; set; } = null!;
 
