@@ -1,0 +1,52 @@
+﻿@model GameLibraryDomain.Model.Game
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Game</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Releaseyear" class="control-label"></label>
+                <input asp-for="Releaseyear" class="form-control" />
+                <span asp-validation-for="Releaseyear" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Genreid" class="control-label"></label>
+                <select asp-for="Genreid" class="form-control" asp-items="ViewBag.Genreid"></select>
+                <span asp-validation-for="Genreid" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Developerid" class="control-label"></label>
+                <select asp-for="Developerid" class="form-control" asp-items="ViewBag.Developerid"></select>
+                <span asp-validation-for="Developerid" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="Createdat" />
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group mt-3">
+                <input type="submit" value="Зберегти" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary ms-2">Повернутися до списку</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

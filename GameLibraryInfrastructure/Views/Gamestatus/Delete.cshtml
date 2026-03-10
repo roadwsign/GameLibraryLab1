@@ -1,0 +1,26 @@
+﻿@model GameLibraryDomain.Model.Gamestatus
+
+@{
+    ViewData["Title"] = "Видалити дані про статус";
+}
+
+<h1>Видалення</h1>
+
+<h3>Ви впевнені, що хочете це видалити?</h3>
+<div>
+    <h4>Developer</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Statusname)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Statusname)
+        </dd>
+    </dl>
+    <form asp-action="Delete" class="mt-3">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Видалити" class="btn btn-danger" />
+        <a asp-action="Index" class="btn btn-secondary ms-2">Повернутися до списку</a>
+    </form>
+</div>

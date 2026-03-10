@@ -1,0 +1,113 @@
+﻿@model IEnumerable<GameLibraryDomain.Model.Game>
+
+@{
+    ViewData["Title"] = ViewBag.FilterName;
+}
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<h1>@ViewBag.FilterName</h1>
+
+<form asp-action="Index" method="get" class="mb-4">
+    <div class="row align-items-end g-2">
+
+        <div class="col-md-3">
+            <label class="form-label">Назва гри:</label>
+            <input type="text" name="searchString" id="searchInput" value="@ViewBag.CurrentFilter" class="form-control" placeholder="Почніть вводити назву..." />
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Жанр:</label>
+            <select name="genreId" class="form-control select-search" asp-items="ViewBag.Genreid">
+                <option value="">Усі жанри</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Розробник:</label>
+            <select name="developerId" class="form-control select-search" asp-items="ViewBag.Developerid">
+                <option value="">Усі розробники</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Рік:</label>
+            <select name="year" class="form-control select-search" asp-items="ViewBag.Years">
+                <option value="">Усі роки</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-info text-white">Знайти</button>
+            <a asp-action="Index" class="btn btn-outline-secondary ms-1">Скинути</a>
+        </div>
+    </div>
+</form>
+
+<p>
+    <a asp-action="Create"
+       asp-route-developerId="@ViewBag.DeveloperId"
+       asp-route-genreId="@ViewBag.GenreId"
+       class="btn btn-primary">Додати нову гру</a>
+</p>
+
+<table class="table table-striped" id="gamesTable">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Title)</th>
+            <th>@Html.DisplayNameFor(model => model.Description)</th>
+            <th>@Html.DisplayNameFor(model => model.Releaseyear)</th>
+            <th>@Html.DisplayNameFor(model => model.Createdat)</th>
+            <th>@Html.DisplayNameFor(model => model.Updatedat)</th>
+            <th>@Html.DisplayNameFor(model => model.Developer)</th>
+            <th>@Html.DisplayNameFor(model => model.Genre)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@Html.DisplayFor(modelItem => item.Releaseyear)</td>
+                <td>@Html.DisplayFor(modelItem => item.Createdat)</td>
+                <td>@Html.DisplayFor(modelItem => item.Updatedat)</td>
+                <td>@Html.DisplayFor(modelItem => item.Developer.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Genre.Name)</td>
+                <td style="white-space: nowrap;">
+                    <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('.select-search').select2({
+                placeholder: "Оберіть зі списку",
+                allowClear: true,
+                width: '100%'
+            });
+            document.getElementById('searchInput').addEventListener('keyup', function () {
+                let filter = this.value.toLowerCase();
+                let rows = document.querySelectorAll('#gamesTable tbody tr');
+
+                rows.forEach(row => {
+                    let title = row.querySelector('td:first-child').textContent.toLowerCase();
+                    if (title.includes(filter)) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            });
+        });
+    </script>
+}
