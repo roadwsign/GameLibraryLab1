@@ -1,0 +1,95 @@
+﻿@{
+    ViewData["Title"] = "Статистика";
+}
+
+<h1 class="mb-4 text-white fw-bold">Статистика бібліотеки</h1>
+
+<div class="row mb-5 g-4">
+    <div class="col-md-6">
+        <div class="p-3 rounded-3 border border-secondary border-opacity-25 bg-dark shadow-sm h-100">
+            <h6 class="text-info fw-bold text-center mb-3 text-uppercase">Кількість ігор за роками</h6>
+            <div id="gamesByYearChart" style="width: 100%; height: 400px;"></div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="p-3 rounded-3 border border-secondary border-opacity-25 bg-dark shadow-sm h-100">
+            <h6 class="text-info fw-bold text-center mb-3 text-uppercase">Розподіл за жанрами</h6>
+            <div id="gamesByGenreChart" style="width: 100%; height: 400px;"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawCharts);
+
+        function drawCharts() {
+            const chartOptions = {
+                backgroundColor: 'transparent',
+                legend: { textStyle: { color: '#ffffff' } },
+                titleTextStyle: { color: '#ffffff' },
+                hAxis: { textStyle: { color: '#ffffff' }, gridlines: { color: 'rgba(255,255,255,0.1)' } },
+                vAxis: { textStyle: { color: '#ffffff' }, gridlines: { color: 'rgba(255,255,255,0.1)' } },
+                chartArea: { width: '85%', height: '80%' }
+            };
+
+            fetch('/api/charts/gamesByYear')
+                .then(response => response.json())
+                .then(data => {
+                    const dataTable = new google.visualization.DataTable();
+                    dataTable.addColumn('string', 'Рік');
+                    dataTable.addColumn('number', 'Кількість ігор');
+
+                    data.forEach(item => {
+                        dataTable.addRow([item.year, item.count]);
+                    });
+
+                    const options = {
+                        ...chartOptions,
+                        colors: ['#32fbe2'],
+                        legend: { position: 'none' }
+                    };
+
+                    const chart = new google.visualization.ColumnChart(document.getElementById('gamesByYearChart'));
+                    chart.draw(dataTable, options);
+                });
+
+            fetch('/api/charts/gamesByGenre')
+                .then(response => response.json())
+                .then(data => {
+                    const dataTable = new google.visualization.DataTable();
+                    dataTable.addColumn('string', 'Жанр');
+                    dataTable.addColumn('number', 'Кількість ігор');
+
+                    data.forEach(item => {
+                        dataTable.addRow([item.genre, item.count]);
+                    });
+
+                    const options = {
+                        ...chartOptions,
+                        pieHole: 0.4,
+                            colors: [
+                                '#ea39b8',
+                                '#32fbe2',
+                                '#6f42c1',
+                                '#f39c12',
+                                '#e74c3c',
+                                '#00ffcc',
+                                '#ff00ff',
+                                '#f1c40f',
+                                '#3498db',
+                                '#9b59b6',
+                                '#e67e22',
+                                '#1abc9c'
+                            ],
+                        legend: { position: 'right', textStyle: { color: '#ffffff' } }
+                    };
+
+                    const chart = new google.visualization.PieChart(document.getElementById('gamesByGenreChart'));
+                    chart.draw(dataTable, options);
+                });
+        }
+    </script>
+}
