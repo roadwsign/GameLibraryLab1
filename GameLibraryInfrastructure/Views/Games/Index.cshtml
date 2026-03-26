@@ -57,7 +57,14 @@
 
             <div class="flex-shrink-0 me-4" style="width: 72px;">
                 <div class="ratio ratio-3x4 rounded shadow-sm overflow-hidden" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
-                    <div class="d-flex align-items-center justify-content-center text-white-50 x-small text-center p-1">No Poster</div>
+                    @if (!string.IsNullOrWhiteSpace(item.Posterurl))
+                    {
+                        <img src="@item.Posterurl" alt="Постер @item.Title" style="object-fit: cover; width: 100%; height: 100%;" onerror="this.onerror=null; this.src='https://placehold.co/400x600/1a0933/32fbe2?text=Error+Loading';" />
+                    }
+                    else
+                    {
+                        <div class="d-flex align-items-center justify-content-center text-white-50 x-small text-center p-1" style="font-size: 0.65rem;">No Poster</div>
+                    }
                 </div>
             </div>
 

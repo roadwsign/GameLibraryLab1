@@ -11,6 +11,9 @@ public partial class Game: Entity
 
     public string Title { get; set; } = null!;
 
+    [Display(Name = "Посилання на постер гри")]
+    public string? Posterurl { get; set; }
+
     [Display(Name = "Опис гри")]
 
     public string? Description { get; set; }

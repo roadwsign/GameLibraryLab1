@@ -81,7 +81,7 @@ namespace GameLibraryInfrastructure.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,Description,Releaseyear,Genreid,Developerid,Id")] Game game)
+        public async Task<IActionResult> Create([Bind("Title,Description,Releaseyear,Genreid,Developerid,Posterurl,Id")] Game game)
         {
             ModelState.Remove("Createdat");
             ModelState.Remove("Updatedat");
@@ -123,7 +123,7 @@ namespace GameLibraryInfrastructure.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Title,Description,Releaseyear,Genreid,Developerid,Createdat,Updatedat,Id")] Game game)
+        public async Task<IActionResult> Edit(int id, [Bind("Title,Description,Releaseyear,Genreid,Developerid,Createdat,Updatedat,Posterurl,Id")] Game game)
         {
             if (id != game.Id)
             {
