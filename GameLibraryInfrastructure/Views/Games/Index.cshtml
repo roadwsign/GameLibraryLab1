@@ -43,12 +43,27 @@
     </div>
 </form>
 
-<p class="mb-4">
+@if (TempData["ImportMessage"] != null)
+{
+    <div class="alert alert-info alert-dismissible fade show mb-4" role="alert" style="background-color: rgba(50,251,226,0.1); border-left: 4px solid #32fbe2; color: #fff;">
+        <strong>Результат:</strong> @TempData["ImportMessage"]
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="d-flex gap-2 mb-4 align-items-center">
     <a asp-action="Create"
        asp-route-developerId="@ViewBag.DeveloperId"
        asp-route-genreId="@ViewBag.GenreId"
        class="btn btn-primary fw-bold" style="background-color: #6f42c1; border: none;">Додати нову гру</a>
-</p>
+
+    <a asp-action="Import" class="btn btn-outline-info fw-bold">
+        <i class="bi bi-upload"></i> Завантажити з файлу
+    </a>
+    <a asp-action="Export" class="btn btn-outline-success fw-bold">
+        <i class="bi bi-download"></i> Експортувати у файл
+    </a>
+</div>
 
 <div class="mt-4" id="gamesList">
     @foreach (var item in Model)

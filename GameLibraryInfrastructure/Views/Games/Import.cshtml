@@ -1,0 +1,29 @@
+﻿@model GameLibraryDomain.Model.Game
+
+@{
+    ViewData["Title"] = "Імпорт ігор";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm" style="background-color: #160c28; border: 1px solid rgba(111, 66, 193, 0.4);">
+                <div class="card-body p-5 text-center">
+                    <h2 class="text-white mb-4">Імпорт з Excel</h2>
+                    <p class="text-white-50 mb-4">Оберіть .xlsx файл для завантаження ігор у бібліотеку.</p>
+
+                    <form asp-action="Import" asp-controller="Games" method="post" enctype="multipart/form-data">
+                        <div class="mb-4 text-start">
+                            <input class="form-control bg-dark text-white border-secondary" type="file" name="fileExcel" id="fileExcel" accept=".xlsx" required />
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-outline-light">Скасувати</a>
+                            <button type="submit" class="btn fw-bold px-4" style="background-color: #32fbe2; color: #1a0933;">Завантажити файл</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

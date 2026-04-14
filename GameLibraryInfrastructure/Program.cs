@@ -9,6 +9,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<GameLibraryDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// import/export files
+builder.Services.AddScoped<GameLibraryInfrastructure.Services.IDataPortServiceFactory<GameLibraryDomain.Model.Game>, 
+    GameLibraryInfrastructure.Services.GameDataPortServiceFactory>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

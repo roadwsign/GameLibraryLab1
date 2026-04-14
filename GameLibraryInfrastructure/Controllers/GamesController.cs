@@ -1,22 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using GameLibraryDomain.Model;
+using GameLibraryInfrastructure;
+using GameLibraryInfrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using GameLibraryDomain.Model;
-using GameLibraryInfrastructure;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace GameLibraryInfrastructure.Controllers
 {
     public class GamesController : Controller
     {
         private readonly GameLibraryDbContext _context;
+        private readonly IDataPortServiceFactory<Game> _gameDataPortServiceFactory;
 
-        public GamesController(GameLibraryDbContext context)
+        public GamesController(GameLibraryDbContext context, IDataPortServiceFactory<Game> gameDataPortServiceFactory)
         {
             _context = context;
+            _gameDataPortServiceFactory = gameDataPortServiceFactory;
         }
 
         // GET: Games
@@ -64,7 +67,13 @@ namespace GameLibraryInfrastructure.Controllers
             {
                 return NotFound();
             }
+            int currentUserId = 1;
+            var userLibraryEntry = await _context.Userlibraries
+                .Include(ul => ul.Status)
+                .FirstOrDefaultAsync(ul => ul.Gameid == id && ul.Userid == currentUserId);
 
+            ViewBag.UserLibraryEntry = userLibraryEntry;
+            ViewBag.Statuses = new SelectList(_context.Gamestatuses, "Id", "Statusname");
             return View(game);
         }
 
@@ -197,6 +206,104 @@ namespace GameLibraryInfrastructure.Controllers
         private bool GameExists(int id)
         {
             return _context.Games.Any(e => e.Id == id);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddToLibrary(int gameId, int statusId, bool isFavorite, int? rating, string? review)
+        {
+            int currentUserId = 1;
+
+            var existingEntry = await _context.Userlibraries
+            .FirstOrDefaultAsync(ul => ul.Gameid == gameId && ul.Userid == currentUserId);
+
+            if (existingEntry != null)
+            {
+                existingEntry.Statusid = statusId;
+                existingEntry.Isfavorite = isFavorite;
+                existingEntry.Rating = rating;
+                existingEntry.Review = review;
+                _context.Update(existingEntry);
+            }
+            else
+            {
+                var newLibraryEntry = new Userlibrary
+                {
+                    Userid = currentUserId,
+                    Gameid = gameId,
+                    Statusid = statusId,
+                    Isfavorite = isFavorite,
+                    Rating = rating,
+                    Review = review,
+                    Addedat = DateTime.Now
+                };
+                _context.Userlibraries.Add(newLibraryEntry);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { id = gameId });
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveFromLibrary(int gameId)
+        {
+            int currentUserId = 1;
+
+            var entry = await _context.Userlibraries
+                .FirstOrDefaultAsync(ul => ul.Gameid == gameId && ul.Userid == currentUserId);
+
+            if (entry != null)
+            {
+                _context.Userlibraries.Remove(entry);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Details), new { id = gameId });
+        }
+
+        // Work with excel files 
+        [HttpGet]
+        public IActionResult Import()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Import(IFormFile fileExcel, CancellationToken cancellationToken = default)
+        {
+            if (fileExcel == null || fileExcel.Length == 0)
+            {
+                TempData["ImportMessage"] = "Помилка: Ви не обрали файл.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var importService = _gameDataPortServiceFactory.GetImportService(fileExcel.ContentType);
+
+            using var stream = fileExcel.OpenReadStream();
+
+            string resultMessage = await importService.ImportFromStreamAsync(stream, cancellationToken);
+
+            TempData["ImportMessage"] = resultMessage;
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Export([FromQuery] string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", CancellationToken cancellationToken = default)
+        {
+
+            var exportService = _gameDataPortServiceFactory.GetExportService(contentType);
+
+            var memoryStream = new MemoryStream();
+            await exportService.WriteToAsync(memoryStream, cancellationToken);
+            await memoryStream.FlushAsync(cancellationToken);
+            memoryStream.Position = 0;
+
+            return new FileStreamResult(memoryStream, contentType)
+            {
+                FileDownloadName = $"games_library_{DateTime.UtcNow.ToShortDateString()}.xlsx"
+            };
         }
     }
 }
