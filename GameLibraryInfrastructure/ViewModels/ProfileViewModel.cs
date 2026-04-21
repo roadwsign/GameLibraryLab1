@@ -25,5 +25,6 @@ namespace GameLibraryInfrastructure.ViewModels
         public string? ConfirmPassword { get; set; }
 
         public List<Statushistory> History { get; set; } = new();
+        public List<Userlibrary> MyGames { get; set; } = new();
     }
 }

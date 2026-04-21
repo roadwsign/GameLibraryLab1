@@ -292,7 +292,7 @@ namespace GameLibraryInfrastructure.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RemoveFromLibrary(int gameId)
+        public async Task<IActionResult> RemoveFromLibrary(int gameId, string? returnUrl = null)
         {
             string? currentUserId = _userManager.GetUserId(User);
 
@@ -303,6 +303,10 @@ namespace GameLibraryInfrastructure.Controllers
             {
                 _context.Userlibraries.Remove(entry);
                 await _context.SaveChangesAsync();
+            }
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
             }
 
             return RedirectToAction(nameof(Details), new { id = gameId });

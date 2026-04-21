@@ -116,11 +116,19 @@ namespace GameLibraryInfrastructure.Controllers
             .OrderByDescending(sh => sh.Changedate)
             .ToListAsync();
 
+            var myGames = await _context.Userlibraries
+                .Include(ul => ul.Game)
+                .Include(ul => ul.Status)
+                .Where(ul => ul.Userid == user.Id)
+                .OrderByDescending(ul => ul.Addedat)
+                .ToListAsync();
+
             var model = new ProfileViewModel
             {
                 UserName = user.UserName ?? "",
                 Email = user.Email ?? "",
-                History = history
+                History = history,
+                MyGames = myGames
             };
             return View(model);
         }
