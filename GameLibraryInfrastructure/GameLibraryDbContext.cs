@@ -27,8 +27,6 @@ public partial class GameLibraryDbContext : DbContext
 
     public virtual DbSet<Statushistory> Statushistories { get; set; }
 
-    public virtual DbSet<User> Users { get; set; }
-
     public virtual DbSet<Userlibrary> Userlibraries { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -140,35 +138,6 @@ public partial class GameLibraryDbContext : DbContext
                 .HasConstraintName("fk_history_library");
         });
 
-        modelBuilder.Entity<User>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("users_pkey");
-
-            entity.ToTable("users");
-
-            entity.HasIndex(e => e.Email, "users_email_key").IsUnique();
-
-            entity.HasIndex(e => e.Username, "users_username_key").IsUnique();
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Createdat)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("createdat");
-            entity.Property(e => e.Email)
-                .HasMaxLength(255)
-                .HasColumnName("email");
-            entity.Property(e => e.Passwordhash)
-                .HasMaxLength(255)
-                .HasColumnName("passwordhash");
-            entity.Property(e => e.Role)
-                .HasMaxLength(50)
-                .HasColumnName("role");
-            entity.Property(e => e.Username)
-                .HasMaxLength(30)
-                .HasColumnName("username");
-        });
-
         modelBuilder.Entity<Userlibrary>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("userlibraries_pkey");
@@ -180,6 +149,9 @@ public partial class GameLibraryDbContext : DbContext
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("addedat");
+            entity.Property(e => e.Updatedat)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("Updatedat");
             entity.Property(e => e.Gameid).HasColumnName("gameid");
             entity.Property(e => e.Isfavorite).HasColumnName("isfavorite");
             entity.Property(e => e.Rating).HasColumnName("rating");
@@ -195,10 +167,6 @@ public partial class GameLibraryDbContext : DbContext
                 .HasForeignKey(d => d.Statusid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_library_status");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Userlibraries)
-                .HasForeignKey(d => d.Userid)
-                .HasConstraintName("fk_library_user");
         });
 
         OnModelCreatingPartial(modelBuilder);

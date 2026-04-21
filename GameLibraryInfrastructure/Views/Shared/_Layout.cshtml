@@ -19,15 +19,33 @@
                         <li class="nav-item"><a class="nav-link" asp-controller="Genres" asp-action="Index">Жанри</a></li>
                         <li class="nav-item"><a class="nav-link" asp-controller="Developers" asp-action="Index">Розробники</a></li>
                         <li class="nav-item"><a class="nav-link" asp-controller="Statistics" asp-action="Index">Статистика</a></li>
+                        @if (User.IsInRole("SuperAdmin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-warning fw-bold" asp-controller="Users" asp-action="Index">Користувачі</a>
+                            </li>
+                        }
                     </ul>
                     <div class="d-flex align-items-center">
                         <form class="d-flex me-3" asp-controller="Games" asp-action="Index" method="get">
                             <input class="form-control me-2" type="search" name="searchString" placeholder="Пошук гри..." style="width: 160px;">
                             <button class="btn btn-secondary text-white" type="submit">Знайти</button>
                         </form>
-                        <div class="btn-group">
-                            <a href="#" class="btn btn-outline-info fw-bold">Увійти</a>
-                            <a href="#" class="btn btn-info fw-bold text-dark">Реєстрація</a>
+                        <div class="d-flex align-items-center">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <a asp-controller="Account" asp-action="Profile" class="text-info me-3 fw-bold text-decoration-none">Вітаємо, @User.Identity.Name!</a>
+                                <form method="post" asp-controller="Account" asp-action="Logout" class="m-0">
+                                    <button type="submit" class="btn btn-outline-danger fw-bold">Вихід</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <div class="btn-group">
+                                    <a asp-controller="Account" asp-action="Login" class="btn btn-outline-info fw-bold">Увійти</a>
+                                    <a asp-controller="Account" asp-action="Register" class="btn btn-info fw-bold text-dark">Реєстрація</a>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>

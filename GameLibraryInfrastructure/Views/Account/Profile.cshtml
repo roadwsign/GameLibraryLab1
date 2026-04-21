@@ -1,0 +1,68 @@
+﻿@model GameLibraryInfrastructure.ViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "Мій профіль";
+}
+
+<div class="container mt-4">
+    <h2 class="text-white mb-4">Налаштування профілю</h2>
+
+    @if (TempData["StatusMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show bg-success text-white border-0" role="alert">
+            @TempData["StatusMessage"]
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card bg-dark text-white shadow-sm border-secondary h-100">
+                <div class="card-header border-secondary bg-transparent">
+                    <h5 class="m-0">Особисті дані</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="UpdateUsername" method="post">
+                        <div class="mb-3">
+                            <label class="text-white-50 small fw-bold">Email</label>
+                            <input asp-for="Email" class="form-control bg-transparent text-white-50 border-secondary" readonly />
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="UserName" class="text-white-50 small fw-bold"></label>
+                            <input asp-for="UserName" class="form-control bg-dark text-white border-secondary" />
+                            <span asp-validation-for="UserName" class="text-danger small"></span>
+                        </div>
+                        <button type="submit" class="btn btn-info fw-bold w-100">Оновити нікнейм</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card bg-dark text-white shadow-sm border-secondary h-100">
+                <div class="card-header border-secondary bg-transparent">
+                    <h5 class="m-0">Безпека</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="ChangePassword" method="post">
+                        <div class="mb-3">
+                            <label asp-for="OldPassword" class="text-white-50 small fw-bold"></label>
+                            <input asp-for="OldPassword" class="form-control bg-dark text-white border-secondary" />
+                            <span asp-validation-for="OldPassword" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="NewPassword" class="text-white-50 small fw-bold"></label>
+                            <input asp-for="NewPassword" class="form-control bg-dark text-white border-secondary" />
+                            <span asp-validation-for="NewPassword" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ConfirmPassword" class="text-white-50 small fw-bold"></label>
+                            <input asp-for="ConfirmPassword" class="form-control bg-dark text-white border-secondary" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+                        <button type="submit" class="btn btn-outline-info fw-bold w-100">Змінити пароль</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

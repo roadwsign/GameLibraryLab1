@@ -1,0 +1,59 @@
+﻿@model IEnumerable<GameLibraryInfrastructure.Models.User>
+@{
+    ViewData["Title"] = "Керування користувачами";
+    var userRoles = ViewBag.UserRoles as Dictionary<string, IList<string>>;
+}
+
+<div class="container mt-4">
+    <h2 class="text-white mb-4">Керування користувачами</h2>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger bg-danger text-white border-0">@TempData["ErrorMessage"]</div>
+    }
+
+    <div class="table-responsive rounded shadow-sm" style="background-color: #160c28;">
+        <table class="table table-dark table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Нікнейм</th>
+                    <th>Email</th>
+                    <th>Поточні ролі</th>
+                    <th class="text-end">Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    var roles = userRoles[user.Id];
+                    <tr>
+                        <td class="align-middle fw-bold text-info">@user.UserName</td>
+                        <td class="align-middle text-white-50">@user.Email</td>
+                        <td class="align-middle">
+                            @foreach (var role in roles)
+                            {
+                                <span class="badge bg-secondary me-1">@role</span>
+                            }
+                        </td>
+                        <td class="text-end align-middle">
+                            @if (!roles.Contains("SuperAdmin"))
+                            {
+                                <form asp-action="ToggleAdmin" method="post" class="d-inline">
+                                    <input type="hidden" name="userId" value="@user.Id" />
+                                    @if (roles.Contains("Admin"))
+                                    {
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Забрати Admin</button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" class="btn btn-sm btn-success">Дати Admin</button>
+                                    }
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -20,7 +20,10 @@
         </div>
         
         <div class="mt-3 d-flex flex-column gap-2">
-            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-outline-light btn-sm">Редагувати гру</a>
+            @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+            {
+                <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-outline-light btn-sm">Редагувати гру</a>
+            }
             <a asp-action="Index" class="btn btn-link text-white-50 btn-sm text-decoration-none">← Повернутися до каталогу</a>
         </div>
     </div>
@@ -48,7 +51,7 @@
                     <h5 class="text-white m-0 fw-bold">
                         @if (myLib.Isfavorite)
                         {
-                            <span class="me-2" style="color: #ea39b8; text-shadow: 0 0 10px #ea39b8;">❤️ Улюблена</span>
+                            <span class="me-2" style="color: #ea39b8; text-shadow: 0 0 10px #ea39b8;">Улюблена</span>
                         }
                         Мій відгук
                     </h5>
@@ -79,7 +82,7 @@
                 }
                 
                 <div class="text-end mt-2 text-white-50" style="font-size: 0.75rem;">
-                    Оновлено: @myLib.Addedat.ToString("dd.MM.yyyy HH:mm")
+                    Оновлено: @((myLib.Updatedat ?? myLib.Addedat).ToString("dd.MM.yyyy HH:mm"))
                 </div>
             </div>
         }

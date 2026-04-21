@@ -6,7 +6,7 @@ namespace GameLibraryDomain.Model;
 public partial class Userlibrary: Entity
 {
 
-    public int Userid { get; set; }
+    public string Userid { get; set; } = null!;
 
     public int Gameid { get; set; }
 
@@ -20,11 +20,10 @@ public partial class Userlibrary: Entity
 
     public DateTime Addedat { get; set; }
 
+    public DateTime? Updatedat { get; set; }
     public virtual Game Game { get; set; } = null!;
 
     public virtual Gamestatus Status { get; set; } = null!;
 
     public virtual ICollection<Statushistory> Statushistories { get; set; } = new List<Statushistory>();
-
-    public virtual User User { get; set; } = null!;
 }

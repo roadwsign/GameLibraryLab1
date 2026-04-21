@@ -1,12 +1,16 @@
 ﻿using GameLibraryDomain.Model;
 using GameLibraryInfrastructure;
+using GameLibraryInfrastructure.Models;
 using GameLibraryInfrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace GameLibraryInfrastructure.Controllers
@@ -15,11 +19,13 @@ namespace GameLibraryInfrastructure.Controllers
     {
         private readonly GameLibraryDbContext _context;
         private readonly IDataPortServiceFactory<Game> _gameDataPortServiceFactory;
+        private readonly UserManager<User> _userManager;
 
-        public GamesController(GameLibraryDbContext context, IDataPortServiceFactory<Game> gameDataPortServiceFactory)
+        public GamesController(GameLibraryDbContext context, IDataPortServiceFactory<Game> gameDataPortServiceFactory, UserManager<User> userManager)
         {
             _context = context;
             _gameDataPortServiceFactory = gameDataPortServiceFactory;
+            _userManager = userManager;
         }
 
         // GET: Games
@@ -67,7 +73,7 @@ namespace GameLibraryInfrastructure.Controllers
             {
                 return NotFound();
             }
-            int currentUserId = 1;
+            string currentUserId = _userManager.GetUserId(User);
             var userLibraryEntry = await _context.Userlibraries
                 .Include(ul => ul.Status)
                 .FirstOrDefaultAsync(ul => ul.Gameid == id && ul.Userid == currentUserId);
@@ -78,6 +84,7 @@ namespace GameLibraryInfrastructure.Controllers
         }
 
         // GET: Games/Create
+        [Authorize(Roles = "Admin, SuperAdmin")]
         public IActionResult Create()
         {
             ViewData["Developerid"] = new SelectList(_context.Developers, "Id", "Name");
@@ -89,6 +96,7 @@ namespace GameLibraryInfrastructure.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin, SuperAdmin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Title,Description,Releaseyear,Genreid,Developerid,Posterurl,Id")] Game game)
         {
@@ -110,6 +118,7 @@ namespace GameLibraryInfrastructure.Controllers
         }
 
         // GET: Games/Edit/5
+        [Authorize(Roles = "Admin, SuperAdmin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -131,6 +140,7 @@ namespace GameLibraryInfrastructure.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin, SuperAdmin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Title,Description,Releaseyear,Genreid,Developerid,Createdat,Updatedat,Posterurl,Id")] Game game)
         {
@@ -169,6 +179,7 @@ namespace GameLibraryInfrastructure.Controllers
         }
 
         // GET: Games/Delete/5
+        [Authorize(Roles = "Admin, SuperAdmin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -190,6 +201,7 @@ namespace GameLibraryInfrastructure.Controllers
 
         // POST: Games/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin, SuperAdmin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -208,11 +220,13 @@ namespace GameLibraryInfrastructure.Controllers
             return _context.Games.Any(e => e.Id == id);
         }
 
+        //add to library
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddToLibrary(int gameId, int statusId, bool isFavorite, int? rating, string? review)
         {
-            int currentUserId = 1;
+            string? currentUserId = _userManager.GetUserId(User);
 
             var existingEntry = await _context.Userlibraries
             .FirstOrDefaultAsync(ul => ul.Gameid == gameId && ul.Userid == currentUserId);
@@ -223,6 +237,7 @@ namespace GameLibraryInfrastructure.Controllers
                 existingEntry.Isfavorite = isFavorite;
                 existingEntry.Rating = rating;
                 existingEntry.Review = review;
+                existingEntry.Updatedat = DateTime.Now;
                 _context.Update(existingEntry);
             }
             else
@@ -243,11 +258,14 @@ namespace GameLibraryInfrastructure.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Details), new { id = gameId });
         }
+
+        //remove from library
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveFromLibrary(int gameId)
         {
-            int currentUserId = 1;
+            string? currentUserId = _userManager.GetUserId(User);
 
             var entry = await _context.Userlibraries
                 .FirstOrDefaultAsync(ul => ul.Gameid == gameId && ul.Userid == currentUserId);
