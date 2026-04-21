@@ -1,33 +1,48 @@
-﻿@{
+﻿@model IEnumerable<GameLibraryDomain.Model.Game>
+
+@{
     ViewData["Title"] = "Головна";
 }
 
-<div class="container py-5">
-    <div class="row align-items-center mb-5 mt-4">
-        <div class="col-md-9">
-            <h1 class="display-4 fw-bold text-white mb-2">Що таке "Ігрова бібліотека"?</h1>
-            <p class="fs-5 text-white-50">Ваша персональна база ігор, все в одному місці. Переглядайте відгуки інших користувачів, додавайте ігри в свою бібліотеку з особливим статусом.</p>
+<div class="py-5">
+    <h1 class="text-white fw-bold mb-3" style="font-size: 3rem;">Що таке "Ігрова бібліотека"?</h1>
+    <div class="row align-items-center mb-5">
+        <div class="col-md-8">
+            <p class="text-info fs-5">
+                Ваша персональна база ігор, все в одному місці. Додавайте ігри в свою бібліотеку з особливим статусом та відстежуйте прогрес в них.
+            </p>
         </div>
-        <div class="col-md-3 text-md-end">
-            <a asp-controller="Games" asp-action="Index" class="btn btn-outline-info fw-bold px-4">Переглянути бібліотеку ігор</a>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <a asp-controller="Games" asp-action="Index" class="btn btn-outline-info fw-bold px-4 py-2" style="border-width: 2px;">
+                Переглянути бібліотеку ігор
+            </a>
         </div>
     </div>
 
-    <div class="row g-4 mb-5">
-        <div class="col-12 border-bottom border-secondary border-opacity-25 pb-2 mb-4">
-            <h6 class="text-uppercase text-info fw-bold ls-1 mb-0 shadow-sm" style="text-shadow: 0 0 10px rgba(50, 251, 226, 0.5);">Нещодавно додано</h6>
-        </div>
-
-        @for (int i = 0; i < 6; i++)
+    <h6 class="text-info fw-bold mb-4 text-uppercase" style="letter-spacing: 1px;">Нещодавно додано</h6>
+    
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3">
+        @foreach (var game in Model)
         {
-            <div class="col-6 col-sm-4 col-md-2">
-                <div class="card bg-transparent border-0 hover-up">
-                    <div class="ratio ratio-3x4 rounded-3 mb-2 shadow-sm" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
-                        <div class="d-flex align-items-center justify-content-center text-white-50 small">No Poster</div>
+            <div class="col">
+                <a asp-controller="Games" asp-action="Details" asp-route-id="@game.Id" class="text-decoration-none">
+                    <div class="card bg-transparent border-0 h-100 hover-up" style="transition: transform 0.2s;">
+                        <div class="ratio ratio-3x4 rounded overflow-hidden mb-2" style="border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05);">
+                            @if (!string.IsNullOrWhiteSpace(game.Posterurl))
+                            {
+                                <img src="@game.Posterurl" alt="@game.Title" style="object-fit: cover; width: 100%; height: 100%;" onerror="this.onerror=null; this.src='https://placehold.co/400x600/1a0933/32fbe2?text=No+Poster';" />
+                            }
+                            else
+                            {
+                                <div class="d-flex align-items-center justify-content-center text-white-50 small">No Poster</div>
+                            }
+                        </div>
+                        <div>
+                            <h6 class="text-white fw-bold mb-0 text-truncate" style="font-size: 0.9rem;">@game.Title</h6>
+                            <small class="text-white-50">@game.Releaseyear</small>
+                        </div>
                     </div>
-                    <div class="small text-white text-truncate fw-bold">Game Title</div>
-                    <div class="x-small text-white-50">2024</div>
-                </div>
+                </a>
             </div>
         }
     </div>

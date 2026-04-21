@@ -1,14 +1,31 @@
+using GameLibraryDomain.Model;
+using GameLibraryInfrastructure;
 using GameLibraryInfrastructure.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace GameLibraryInfrastructure.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly ILogger<HomeController> _logger;
+        private readonly GameLibraryDbContext _context;
+
+        public HomeController(ILogger<HomeController> logger, GameLibraryDbContext context)
         {
-            return View();
+            _logger = logger;
+            _context = context;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var recentGames = await _context.Games
+                .OrderByDescending(g => g.Id)
+                .Take(6)
+                .ToListAsync();
+
+            return View(recentGames);
         }
 
         public IActionResult Privacy()
