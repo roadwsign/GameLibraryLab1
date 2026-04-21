@@ -64,5 +64,69 @@
                 </div>
             </div>
         </div>
+
+    </div>
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card bg-dark text-white shadow-sm border-secondary">
+                <div class="card-header border-secondary bg-transparent d-flex justify-content-between align-items-center">
+                    <h5 class="m-0">Остання активність</h5>
+                    <span class="badge bg-info text-dark">@Model.History.Count записів</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mb-0 admin-table">
+                            <thead>
+                                <tr class="text-white-50 small">
+                                    <th class="ps-4">Гра</th>
+                                    <th>Подія</th>
+                                    <th>Статус</th>
+                                    <th class="text-end pe-4">Дата</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var entry in Model.History)
+                                {
+                                    <tr>
+                                        <td class="ps-4">
+                                            <a asp-controller="Games" asp-action="Details" asp-route-id="@entry.Userlibrary.Gameid" class="text-info fw-bold text-decoration-none">
+                                                @entry.Userlibrary.Game.Title
+                                            </a>
+                                        </td>
+                                        <td>
+                                            @if (entry.Oldstatus == null)
+                                            {
+                                                <span class="text-success small">Додано в бібліотеку</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-warning small">Зміна статусу</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (entry.Oldstatus != null)
+                                            {
+                                                <span class="text-white-50">@entry.Oldstatus.Statusname</span>
+                                                <span class="mx-1">→</span>
+                                            }
+                                            <span class="badge bg-secondary">@entry.Newstatus.Statusname</span>
+                                        </td>
+                                        <td class="text-end pe-4 text-white-50 small">
+                                            @entry.Changedate.ToString("dd.MM.yyyy HH:mm")
+                                        </td>
+                                    </tr>
+                                }
+                                @if (!Model.History.Any())
+                                {
+                                    <tr>
+                                        <td colspan="4" class="text-center py-4 text-white-50">Історія поки що порожня</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

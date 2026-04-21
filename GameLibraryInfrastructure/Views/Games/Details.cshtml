@@ -131,7 +131,34 @@
                 </div>
             </form>
         </div>
-        
+        @if (ViewBag.StatusHistory != null && ((IEnumerable<GameLibraryDomain.Model.Statushistory>)ViewBag.StatusHistory).Any())
+        {
+            <div class="mt-4">
+                <h6 class="text-white-50 small fw-bold text-uppercase mb-3">Історія статусів</h6>
+                <div class="position-relative ps-3" style="border-left: 2px solid rgba(50,251,226,0.2);">
+                    @foreach (var history in (IEnumerable<GameLibraryDomain.Model.Statushistory>)ViewBag.StatusHistory)
+                    {
+                        <div class="mb-3 position-relative">
+                            <div class="position-absolute" style="width: 10px; height: 10px; background: #32fbe2; border-radius: 50%; left: -21px; top: 6px; box-shadow: 0 0 8px #32fbe2;"></div>
+                            <div class="text-white small">
+                                @if (history.Oldstatus != null)
+                                {
+                                    <span>Змінено з <span class="text-white-50">@history.Oldstatus.Statusname</span> на </span>
+                                }
+                                else
+                                {
+                                    <span>Додано зі статусом </span>
+                                }
+                                <span class="badge bg-secondary">@history.Newstatus.Statusname</span>
+                            </div>
+                            <div class="text-white-50" style="font-size: 0.75rem;">
+                                @history.Changedate.ToString("dd.MM.yyyy HH:mm")
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
     </div>
 </div>
 @section Scripts {

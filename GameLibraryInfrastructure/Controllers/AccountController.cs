@@ -1,9 +1,11 @@
-﻿using GameLibraryDomain.Model; // Щоб бачити клас User
+﻿using DocumentFormat.OpenXml.InkML;
+using GameLibraryDomain.Model;
 using GameLibraryInfrastructure.Models;
-using GameLibraryInfrastructure.ViewModels; // Щоб бачити RegisterViewModel
+using GameLibraryInfrastructure.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
 
@@ -13,11 +15,13 @@ namespace GameLibraryInfrastructure.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly GameLibraryDbContext _context;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, GameLibraryDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
         }
 
         [HttpGet]
@@ -103,10 +107,20 @@ namespace GameLibraryInfrastructure.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return NotFound();
 
+            var history = await _context.Statushistories
+            .Include(sh => sh.Newstatus)
+            .Include(sh => sh.Oldstatus)
+            .Include(sh => sh.Userlibrary)
+                .ThenInclude(ul => ul.Game)
+            .Where(sh => sh.Userlibrary.Userid == user.Id)
+            .OrderByDescending(sh => sh.Changedate)
+            .ToListAsync();
+
             var model = new ProfileViewModel
             {
                 UserName = user.UserName ?? "",
-                Email = user.Email ?? ""
+                Email = user.Email ?? "",
+                History = history
             };
             return View(model);
         }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using GameLibraryDomain.Model;
+using System.ComponentModel.DataAnnotations;
 
 namespace GameLibraryInfrastructure.ViewModels
 {
@@ -22,5 +23,7 @@ namespace GameLibraryInfrastructure.ViewModels
         [Display(Name = "Підтвердження нового пароля")]
         [Compare("NewPassword", ErrorMessage = "Паролі не співпадають")]
         public string? ConfirmPassword { get; set; }
+
+        public List<Statushistory> History { get; set; } = new();
     }
 }

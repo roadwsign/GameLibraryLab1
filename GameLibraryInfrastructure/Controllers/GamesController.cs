@@ -80,6 +80,14 @@ namespace GameLibraryInfrastructure.Controllers
 
             ViewBag.UserLibraryEntry = userLibraryEntry;
             ViewBag.Statuses = new SelectList(_context.Gamestatuses, "Id", "Statusname");
+            var statusHistory = await _context.Statushistories
+                .Include(sh => sh.Newstatus)
+                .Include(sh => sh.Oldstatus)
+                .Where(sh => sh.Userlibrary.Gameid == id && sh.Userlibrary.Userid == currentUserId)
+                .OrderByDescending(sh => sh.Changedate)
+                .ToListAsync();
+
+            ViewBag.StatusHistory = statusHistory;
             return View(game);
         }
 
@@ -233,6 +241,17 @@ namespace GameLibraryInfrastructure.Controllers
 
             if (existingEntry != null)
             {
+                if (existingEntry.Statusid != statusId)
+                {
+                    var history = new Statushistory
+                    {
+                        Userlibraryid = existingEntry.Id,
+                        Oldstatusid = existingEntry.Statusid,
+                        Newstatusid = statusId,
+                        Changedate = DateTime.Now
+                    };
+                    _context.Statushistories.Add(history);
+                }
                 existingEntry.Statusid = statusId;
                 existingEntry.Isfavorite = isFavorite;
                 existingEntry.Rating = rating;
@@ -253,6 +272,16 @@ namespace GameLibraryInfrastructure.Controllers
                     Addedat = DateTime.Now
                 };
                 _context.Userlibraries.Add(newLibraryEntry);
+                await _context.SaveChangesAsync();
+
+                var history = new Statushistory
+                {
+                    Userlibraryid = newLibraryEntry.Id,
+                    Oldstatusid = null,
+                    Newstatusid = statusId,
+                    Changedate = DateTime.Now
+                };
+                _context.Statushistories.Add(history);
             }
 
             await _context.SaveChangesAsync();
